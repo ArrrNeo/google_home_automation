@@ -1,18 +1,52 @@
 #!/usr/bin/env python
 import os
 import logging
-from tv_remote import tv_remote
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
+from subprocess import call
+from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-# initialize log class
+# logging stuff
+fout = open(dir_path + '/out.txt', 'w')
+ferr = open(dir_path + '/err.txt', 'w')
 log_file_name = dir_path + '/logs.txt'
 logging.basicConfig(filename=log_file_name, level=logging.DEBUG)
 
+class tv_remote:
+    def __init__(self):
+        return
+
+    def process_request(self, cmd):
+        logging.debug("process cmd: " + cmd)
+        if cmd == "switch_TV":
+            logging.debug("turning on/off TV")
+            fpath = dir_path + "/power.sh"
+            call([fpath], stdout=fout, stderr=ferr)
+            return
+        if cmd == "volume_up":
+            logging.debug("increasing the volume")
+            fpath = dir_path + "/volumeup.sh"
+            call([fpath], stdout=fout, stderr=ferr)
+            return
+        if cmd == "volume_down":
+            logging.debug("decreasing the volume")
+            fpath = dir_path + "/volumedown.sh"
+            call([fpath], stdout=fout, stderr=ferr)
+            return
+        if cmd == "hdmi_1":
+            logging.debug("switching to hdmi_1")
+            fpath = dir_path + "/hdmi1.sh"
+            call([fpath], stdout=fout, stderr=ferr)
+            return
+        if cmd == "hdmi_2":
+            logging.debug("switching to hdmi_2")
+            fpath = dir_path + "/hdmi2.sh"
+            call([fpath], stdout=fout, stderr=ferr)
+            return
+
 # initialize remote class
-tv = tv_remote(logging)
+tv = tv_remote()
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self):
